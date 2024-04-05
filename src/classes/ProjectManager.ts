@@ -33,9 +33,11 @@ export class ProjectManager {
             }
             
             const project = new Project(data);
+            
             project.ui.addEventListener("click", () => {
                 const projectPage = document.getElementById("project-page") as HTMLDivElement   
                 const detailsPage = document.getElementById("project-details") as HTMLDivElement
+    
                 if (!detailsPage) {return}
                 projectPage.style.display = "none"
                 detailsPage.style.display = "flex"
@@ -85,12 +87,19 @@ export class ProjectManager {
                 }
         }
 
-
+//M2-Assignment Q#5
         getProject(id:string) {
-            const project= this.list.find((project) => {
-                return project.id === id      
+            console.log(`Searching for project with id: ${id}`);
+            const project = this.list.find((project) => {
+                console.log(`Checking project with id: ${project.id}`);
+                return project.id === id;
             })
-            return project
+            if (project) {
+                console.log(`Found project with id: ${project.id}`);
+            } else {
+                console.log(`No project found with id: ${id}`);
+            }
+            return project;
         }
 
         deleteProject(id: string) {
@@ -117,13 +126,7 @@ export class ProjectManager {
             
             
         }
-        updateProject(updatedProject: Project) {
-            const project = this.list.find(project => project.id === updatedProject.id);
-            if (!project) {
-                throw new Error('Project not found');
-            }
-            this.list = this.list.map(project => project.id === updatedProject.id ? updatedProject : project)
-        }
+
 
         addProject(project: Project) {
             this.list.push(project);

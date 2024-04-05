@@ -1,6 +1,10 @@
+import * as THREE from "three"
 import { IProject, Project, role, status } from "./classes/Project"
 import { ProjectManager } from "./classes/ProjectManager"
 import { closeModal, showModal, toggleModal, } from "./classes/Modal"
+import { Container } from "postcss"
+
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 
 
 const projectlistUI = document.getElementById("project-list") as HTMLDivElement
@@ -13,6 +17,7 @@ if (newProjectBtn) {
 } else {
     console.warn("No new project button found")
 }
+
 
 
 
@@ -98,72 +103,60 @@ if(importBtn)  {
         projectManager.importJSON()
     })
 }
-// Get a reference to the "Edit-button"
-const editButton = document.getElementById("edit-button") as HTMLButtonElement;
-if (editButton) {
-    // Add a click event listener to the "Edit-button"
-    editButton.addEventListener("click", () => {
-        // Create a new instance of the modal class and show the modal
-       showModal("edit-project-modal")
 
-        const editForm = document.getElementById("edit-project-form") as HTMLFormElement;
-        if (editForm instanceof HTMLFormElement) {
-            editForm.addEventListener("submit", (event) => {
-                // Prevent the form from submitting normally
-                event.preventDefault();
 
-                // Get the form data
-                const formData = new FormData(editForm);
-                //OBJEKT
-                const projectProperty: IProject = {
-                    description: formData.get('description') as string,
-                    name: formData.get('name') as string,
-                    role: formData.get('role') as role,
-                    status: formData.get('status') as status,
-                    date: new Date(formData.get('date') as string)
-                };
-            
+const editbtn= document.getElementById("edit-button")
+if (editbtn) {
+    editbtn.addEventListener("click", () => {showModal("edit-project-modal")})
+} else {
+    console.warn("No new project button found")
+}
+
+//M2-Assignment Q#5
+const editForm = document.getElementById("edit-project-form") as HTMLFormElement
+
+
+if (editForm instanceof HTMLFormElement) {
+    editForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(editForm);
+        const projectID =  projectManager.id
+        const projectToUpdate = projectManager.getProject(projectID)
+
+        if(projectToUpdate) {
+            projectToUpdate.description = formData.get("description") as string,
+            projectToUpdate.name = formData.get("name") as string,  // hämtar värdet från inputfälten
+            projectToUpdate.role = formData.get("role") as role,// hämtar värdet från inputfälten och giltigöra att det är av typen role
+            projectToUpdate.status= formData.get("status") as status, // hämtar värdet från inputfälten och giltigöra att det är av typen status
+            projectToUpdate.date = new Date (formData.get("date") as string) //
+        }
+
+        
+        try {
+            if (projectToUpdate) {
+                projectManager.setDetailsPage(projectToUpdate, projectID); // Call the setDetailsPage method with the project and project.id
+                projectToUpdate.setUI()
+                editForm.reset(); // Reset the input fields
+                toggleModal("edit-project-modal");
+                console.warn(projectToUpdate);
                 
-                const currentProject = projectManager.getProject(editForm.dataset.projectId as string);
-                console.log('Project ID:', editForm.dataset.projectId); // Debugging statement
-                console.log('Current project:', currentProject); // Debugging statement
-            if (currentProject) {
-                // Update the properties of the current project
-                currentProject.description = projectProperty.description;
-                currentProject.name = projectProperty.name;
-                currentProject.role = projectProperty.role;
-                currentProject.status = projectProperty.status;
-                currentProject.date = projectProperty.date;
-            
-                projectManager.updateProject(currentProject);
-                projectManager.setDetailsPage(currentProject, id);
             }
+        } catch (error) {
+            // Handle the error
+        }
+        const errorElement = document.getElementById("pop-up-modal") as HTMLElement
+                errorElement.style.display = "flex"; // Visar elementet som normalt är dolt
 
-           /* const updateBtn = document.getElementById("updateBtn") as HTMLButtonElement;
-            if (updateBtn) {
-                updateBtn.addEventListener("click", () => {
-                    const formData = new FormData(editForm);
+                const closeBtnPopup = document.getElementById("close-pop-up-btn")
+                if (closeBtnPopup) {
+                  closeBtnPopup.addEventListener("click", () => {
+                  errorElement.style.display = "none"; // släcker ner elementet
+                });
+                }
 
-                    const newProject: IProject = {
-                        description: formData.get('description') as string,
-                        name: formData.get('name') as string,
-                        role: formData.get('role') as role,
-                        status: formData.get('status') as status,
-                        date: new Date(formData.get('date') as string)
-                    };
-                    const project = new Project(newProject);
-                    projectManager.newProject(project);
-                    projectManager.setDetailsPage(project);
-                })
-            } */
+            }
+    )
+    };
 
 
-            const closeBtn = document.getElementById("close-btn")
-            closeBtn.addEventListener("click", (event) => {closeModal("edit-project-modal")})   
-            event.preventDefault()
-            closeModal("edit-project-modal")
-            
-    });
-}
-})
-}
+    
