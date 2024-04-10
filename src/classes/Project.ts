@@ -9,6 +9,7 @@ function changeColorIcon() {
     return color;   
 }
 
+const projectToUpdate =[]
 
 
 // För att det är valbara alternativ
@@ -25,8 +26,14 @@ export interface IProject {
 
 }
 
-
-
+//M2-Assigment-#6
+export interface ITodo {
+    name: string;
+    description: string;
+    role: role; // assuming 'role' is a type you've defined
+    status: status; // assuming 'status' is a type you've defined
+    date: Date;
+}
 
 
 export class Project implements IProject{
@@ -41,10 +48,13 @@ ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
 cost: number = 2
 progess: number = 0
 id: string
+//M2-Assigment-#6
+todos: ITodo[];
 
- 
+ constructor(data: IProject, todos: ITodo[] = []) {
+//M2-Assigment-#6
+        this.todos = todos
 
- constructor(data: IProject) {
         //project card Property defintion
       
         for (const key in data) {
@@ -68,9 +78,10 @@ id: string
         this.id = uuidv4();
         this.setUI();
     
-   
+        console.log(todos)
     }
     
+
     setUI() { 
         if (this.ui){return}
         this.ui = document.createElement("div") // skapar en ny div

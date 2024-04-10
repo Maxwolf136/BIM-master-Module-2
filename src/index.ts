@@ -159,4 +159,71 @@ if (editForm instanceof HTMLFormElement) {
     };
 
 
+
+//M2-Assigment-Q#6
+
+const todDoForm = document.getElementById("T-Do-project-form") as HTMLFormElement
+
+if(todDoForm instanceof HTMLFormElement) {
+    todDoForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(todDoForm);
+
+        
+        const todoData = {
+            name: formData.get("name-todo") as string,
+            description: formData.get("description-todo") as string,
+            status: formData.get("status") as status,
+            date : new Date(formData.get("date") as string).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+        })}
+        
+        // Select the div with class "To-dolist"
+        const toDoListDiv = document.querySelector(".To-dolist");
+
+        // Clone the div
+        if (toDoListDiv) {
+            const newDiv = toDoListDiv.cloneNode(true) as HTMLElement;
+           
+            newDiv.innerHTML = `
+            <div class="To-dolist" style="display: flex;">
+                <h4 name="name-todo" class="T-doHeader">${todoData.name}</h4>
+                <p1 id="description-todo" name="description-todo"">${todoData.description}</p1>
+                <p1 id="status-todo" name="status-todo">${todoData.status}</p1>
+                <div id="date-todo">${todoData.date}</div>
+                <i id="T-Symbol" class="material-icons">check</i>
+             </div>
+            `;
     
+            newDiv.style.display = "flex"; 
+            
+            // Select the container within the .dashboard-card div to which you want to append the new div
+            const container = document.querySelector(".dashboard-card-todo");
+           
+
+            // Append the new div to the container
+            if (container) {
+                container.appendChild(newDiv);
+            }
+        
+        }
+
+        // Toggle the modal
+        toggleModal("T-Do-project-modal");
+        todDoForm.reset()
+        console.log()
+    })
+}
+
+
+
+const edotTodo= document.getElementById("addTodo")
+if (edotTodo) {
+    edotTodo.addEventListener("click", () => {showModal("T-Do-project-modal")})
+} else {
+    console.warn("No new project button found")
+}
+const todoDiv = document.getElementById("To-dolist")  as HTMLDivElement 
+todoDiv.style.display = "flex";
