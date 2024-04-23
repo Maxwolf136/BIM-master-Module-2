@@ -1,16 +1,42 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectManager } from './ProjectManager';
+import { BlurShaderUtils } from 'three/examples/jsm/shaders/DepthLimitedBlurShader.js';
+import { Todo } from './Todo';
 
- //M2-Assignment Q#2
+
+ //M2-Assignment Q#2 
 const colorArray = ['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'grey'];
+
+
 
 function changeColorIcon() {
     const color = colorArray[Math.floor(Math.random() * colorArray.length)];
     return color;   
 }
 
-const projectToUpdate =[]
+ //M2-Assigment Q#09
+ export function changeColorTodo (todo: IProject) {
+    const statusSelect = document.getElementById("status-todo") as HTMLSelectElement;
+    const todoDiv = document.getElementById("todo-list") as HTMLElement;
 
+    if (statusSelect && todoDiv) {
+        statusSelect.addEventListener("change", () => {
+            const status = statusSelect.value;
+            const statusColorMap = {
+                "pending": "blue",
+                'closed':  "green",
+                'archived': "red"
+            };
+
+            const color = statusColorMap[status];
+            if (color) {
+                todoDiv.style.backgroundColor = color;
+            } else {
+                console.warn(`No color defined for status: ${status}`);
+            }
+        });
+}
+ }
 
 // För att det är valbara alternativ
 export type role = "Admin" | "Manager" | "Developer" | "Designer"
@@ -23,16 +49,6 @@ export interface IProject {
     role: role // role: role
     status: status // status: status
     date: Date
-
-}
-
-//M2-Assigment-#6
-export interface ITodo {
-    name: string;
-    description: string;
-    role: role; // assuming 'role' is a type you've defined
-    status: status; // assuming 'status' is a type you've defined
-    date: Date;
 }
 
 
@@ -42,18 +58,19 @@ export class Project implements IProject{
     role: role
     status: status
     date: Date
+    ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
+    cost: number = 2
+    progess: number = 0
+    id: string
+    //M2-Assigment-#6
+    todos: Todo[];
 
-// Variabler Property
-ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
-cost: number = 2
-progess: number = 0
-id: string
-//M2-Assigment-#6
-todos: ITodo[];
 
- constructor(data: IProject, todos: ITodo[] = []) {
-//M2-Assigment-#6
-        this.todos = todos
+
+ constructor(data: IProject, ) {
+        //M2-Assigment-#6
+        this.todos = [] = [];
+
 
         //project card Property defintion
       
@@ -76,11 +93,18 @@ todos: ITodo[];
        
         //UNIK ID per Projekt
         this.id = uuidv4();
+       
+
         this.setUI();
+        
+        //this.setUITodo(todos);
     
-        console.log(todos)
+        
     }
-    
+     //M2-Assigment Q#7
+    addTodo(todo: Todo) {
+        this.todos.push(todo)
+    }
 
     setUI() { 
         if (this.ui){return}
@@ -91,7 +115,8 @@ todos: ITodo[];
         
         //M2-Assignment Q#1
         this.ui.innerHTML = ` 
-    <div class="card-header">            
+    <div class="card-header">  
+              
     <p style="background-color: ${randomColor}; padding: 10px; border-radius: 8px; aspect-ratio: 1;">${this.name.slice(0,2)}</p>
                 <div>
                 <h5>${this.name}</h5>
@@ -117,5 +142,7 @@ todos: ITodo[];
                 </div>
             </div>
     `}
-}
+    
+
+    }
 

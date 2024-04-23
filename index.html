@@ -162,7 +162,7 @@
                                 <label>Finish date</label>
                         <input name="date" type="date">
                     <div class="button-container">
-                        <button id="close-btn"  type="button" style=" align-items:end; color: white; padding: 9px; border-radius: 6px;">Cancel</button>
+                        <button id="edit-close-btn" type="button" style=" align-items:end; color: white; padding: 9px; border-radius: 6px;">Cancel</button>
                         <button id="updateBtn" type="submit" style="color: rgb(255, 255, 255); background-color: rgb(59, 84, 153); padding: 9px; border-radius: 6px;">Update</button>
                 </form>
                 <dialog id="pop-up-modal" style="display:none; ">
@@ -258,7 +258,7 @@
                                             <label>Finish date</label>
                                     <input name="date" type="date">
                                 <div class="button-container">
-                                    <button id="close-btn"  type="button" style=" align-items:end; color: white; padding: 9px; border-radius: 6px;">Cancel</button>
+                                    <button id="todoclosebtn"  type="button" style=" align-items:end; color: white; padding: 9px; border-radius: 6px;">Cancel</button>
                                     <button type="submit" style="color: white; background-color: rgb(0, 255, 13); padding: 9px; border-radius: 6px;">Create</button>
                             </form>
                         </dialog>
@@ -268,7 +268,7 @@
                         <div class="To-dolist" style="display: none;">
                             <h4 name="name-todo" class="T-doHeader">Rubrik</h4>
                             <p1 id="description-todo" name="description-todo" id="description-todo">Beskrivning</p1>
-                            <p1 id="status-todo" name="status-todo" >Status</p1>
+                            <div id="status-todo" name="status-todo" >Status</div>
                             <div id="date-todo">Datum</div>
                             <i id="T-Symbol" class="material-icons">check</i>
                         </div>

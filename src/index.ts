@@ -1,11 +1,8 @@
-import * as THREE from "three"
-import { IProject, Project, role, status } from "./classes/Project"
+import { IProject, role, status } from "./classes/Project"
 import { ProjectManager } from "./classes/ProjectManager"
 import { closeModal, showModal, toggleModal, } from "./classes/Modal"
-import { Container } from "postcss"
-
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
-
+import { color, element } from "three/examples/jsm/nodes/Nodes.js"
+import { Todo, ITodo } from "./classes/Todo"
 
 const projectlistUI = document.getElementById("project-list") as HTMLDivElement
 const projectManager = new ProjectManager(projectlistUI)
@@ -51,12 +48,13 @@ if(projectForm && projectForm instanceof HTMLFormElement) {
             name: formData.get("name") as string,  // hämtar värdet från inputfälten
             role: formData.get("role") as role,// hämtar värdet från inputfälten och giltigöra att det är av typen role
             status: formData.get("status") as status, // hämtar värdet från inputfälten och giltigöra att det är av typen status
-            date: new Date (formData.get("date") as string) //
+            date: new Date (formData.get("date") as string), //
         }
         
  
 try {
-    const project = projectManager.newProject(projectProperty) // skapar en ny variabel som är av typen projectManager och kallar på metoden newProject
+
+    const project = projectManager.newProject(projectProperty,  ) // skapar en ny variabel som är av typen projectManager och kallar på metoden newProject
    // nameLength()
     projectForm.reset() // rensar inputfälten
     toggleModal ("new-project-modal")
@@ -78,7 +76,7 @@ try {
     }
 }) //end of eventlistener
 
-const closeBtn = document.getElementById("close-btn")
+const closeBtn = document.getElementById("close-btn") as HTMLButtonElement
 closeBtn.addEventListener("click", (event) => {closeModal("new-project-modal")})   
 closeModal("new-project-modal")
 console.log(closeBtn)
@@ -88,14 +86,15 @@ console.log(closeBtn)
     console.warn("No project form found")
 }
 
-
-
+//M2-Assignment Q#7
 const exportBtn = document.getElementById("export-btn")
 if(exportBtn)  {
-    exportBtn.addEventListener("click", () => {
-        projectManager.exportJSON()
-      })
+        exportBtn.addEventListener("click", () => {
+            projectManager.exportToJSON();
+  })
 }
+
+
 
 const importBtn = document.getElementById("import-btn")
 if(importBtn)  {
@@ -144,33 +143,47 @@ if (editForm instanceof HTMLFormElement) {
         } catch (error) {
             // Handle the error
         }
+
+
         const errorElement = document.getElementById("pop-up-modal") as HTMLElement
-                errorElement.style.display = "flex"; // Visar elementet som normalt är dolt
+        errorElement.style.display = "flex"; // Visar elementet som normalt är dolt
 
-                const closeBtnPopup = document.getElementById("close-pop-up-btn")
-                if (closeBtnPopup) {
-                  closeBtnPopup.addEventListener("click", () => {
-                  errorElement.style.display = "none"; // släcker ner elementet
-                });
-                }
+        const closeBtnPopup = document.getElementById("close-pop-up-btn")
+        if (closeBtnPopup) {
+            closeBtnPopup.addEventListener("click", () => {
+                errorElement.style.display = "none"; // släcker ner elementet
+            });
+        }
 
-            }
-    )
-    };
+    })
+};
+
+const closeBtn = document.getElementById("edit-close-btn") as HTMLButtonElement
+closeBtn.addEventListener("click", (event) => {closeModal("edit-project-modal")})   
+closeModal("edit-project-modal")
+console.log(closeBtn)
 
 
 
 //M2-Assigment-Q#6
+const edotTodo= document.getElementById("addTodo") as HTMLButtonElement
+if (edotTodo) {
+    edotTodo.addEventListener("click", () => {showModal("T-Do-project-modal")})
+} else {
+    console.warn("No new project button found")
+}
+//M2-Assigment-Q#6
+
 
 const todDoForm = document.getElementById("T-Do-project-form") as HTMLFormElement
 
-if(todDoForm instanceof HTMLFormElement) {
-    todDoForm.addEventListener("submit", (e) => {
+    
+    if(todDoForm instanceof HTMLFormElement ) {
+
+        todDoForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = new FormData(todDoForm);
-
-        
-        const todoData = {
+        const todoData: ITodo = {
             name: formData.get("name-todo") as string,
             description: formData.get("description-todo") as string,
             status: formData.get("status") as status,
@@ -178,52 +191,74 @@ if(todDoForm instanceof HTMLFormElement) {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
+            
         })}
+        console.log(todoData)
         
-        // Select the div with class "To-dolist"
+
+        // Select the div with class "To-dolist" 
         const toDoListDiv = document.querySelector(".To-dolist");
 
-        // Clone the div
+        //Create new aa div Element
         if (toDoListDiv) {
-            const newDiv = toDoListDiv.cloneNode(true) as HTMLElement;
-           
-            newDiv.innerHTML = `
-            <div class="To-dolist" style="display: flex;">
-                <h4 name="name-todo" class="T-doHeader">${todoData.name}</h4>
-                <p1 id="description-todo" name="description-todo"">${todoData.description}</p1>
-                <p1 id="status-todo" name="status-todo">${todoData.status}</p1>
-                <div id="date-todo">${todoData.date}</div>
-                <i id="T-Symbol" class="material-icons">check</i>
-             </div>
-            `;
-    
-            newDiv.style.display = "flex"; 
             
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = `
+            <div class="To-dolist" id="todo-list" style="display: flex";>
+            <h4 name="name-todo" class="T-doHeader">${todoData.name}</h4>
+            <p1 id="description-todo" name="description-todo">${todoData.description}</p1>d
+            <div id="date-todo">${todoData.date}</div>
+            <div id="status-todo" name="status-todo">${todoData.status}<div>
+            <button class="editTodoitem" id="editTodoitem" style="display:flex">
+                <i id="editTodoitem" class="material-icons">edit</i>
+            </button>
+            
+        </div>
+        `;
+
+            newDiv.style.display = "flex";
+            
+             
+
             // Select the container within the .dashboard-card div to which you want to append the new div
             const container = document.querySelector(".dashboard-card-todo");
-           
-
+            
+            
             // Append the new div to the container
             if (container) {
                 container.appendChild(newDiv);
             }
-        
+            
         }
-
+        
+    
         // Toggle the modal
         toggleModal("T-Do-project-modal");
-        todDoForm.reset()
-        console.log()
-    })
-}
+        todDoForm.reset();
+
+        //Using the addtodoproject to push it to an array property in Project Class
+        const todo = todoData;
+        const project = projectManager.id;
+        const projectToUpdate = projectManager.getProject(project);
+        if (projectToUpdate) {
+            projectManager.addTodoToProject(todo, project);
+            
+        }
+        
+    })   
+
+    
+    
+    
+}    
+
+const todocloseBtn = document.getElementById("todoclosebtn") as HTMLButtonElement
+todocloseBtn.addEventListener("click", () => {
+    closeModal("T-Do-project-modal")
+}) 
 
 
-
-const edotTodo= document.getElementById("addTodo")
-if (edotTodo) {
-    edotTodo.addEventListener("click", () => {showModal("T-Do-project-modal")})
-} else {
-    console.warn("No new project button found")
-}
-const todoDiv = document.getElementById("To-dolist")  as HTMLDivElement 
-todoDiv.style.display = "flex";
+const editbtnToDo =  document.getElementById("editTodoitem") as HTMLButtonElement
+editbtnToDo.addEventListener("click", () => {
+    console.warn("whatahell")
+})

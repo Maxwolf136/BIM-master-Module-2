@@ -283,6 +283,8 @@ button {
   background-color: rgb(62, 63, 63);
   flex-direction: row;
   border-top-right-radius: 40px;
+  max-width: 435px;
+  content: wrap;
 }
 
 .T-doHeader {
@@ -295,22 +297,36 @@ button {
   height: 100px;
   width: 120px;
   text-wrap: 10px;
+  content: wrap;
 }
 
 #status-todo {
-  margin-right: 30px;
-  margin-left: 30px;
-  text-align: center;
-  align-items: center;
-  background-color: green;
-  border-radius: 20px;
-  padding: 20px;
+  display: flex;
 
  }
+
+#date-todo {
+  display: flex;
+  margin: 20px;
+}
+
+ #editTodo {
+  display: flex;
+  border-radius: 20px;
+  width: 60px;
+  color: gold;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+ }
+
 
  #T-Symbol {
   background-color: #8e8b8b;
   border-radius: 10px;
+  width: 100px;
+  align-items: center;
+  justify-content:right;
  }
 
 .dashboard-card-header {
