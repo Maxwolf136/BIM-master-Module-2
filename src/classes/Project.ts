@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectManager } from './ProjectManager';
 import { BlurShaderUtils } from 'three/examples/jsm/shaders/DepthLimitedBlurShader.js';
-import { Todo } from './Todo';
+import { Todo } from './TodoClass';
 
 
  //M2-Assignment Q#2 
@@ -15,7 +15,7 @@ function changeColorIcon() {
 }
 
  //M2-Assigment Q#09
- export function changeColorTodo (todo: IProject) {
+/*  export function changeColorTodo (todo: IProject) {
     const statusSelect = document.getElementById("status-todo") as HTMLSelectElement;
     const todoDiv = document.getElementById("todo-list") as HTMLElement;
 
@@ -36,7 +36,7 @@ function changeColorIcon() {
             }
         });
 }
- }
+ } */
 
 // För att det är valbara alternativ
 export type role = "Admin" | "Manager" | "Developer" | "Designer"
@@ -67,7 +67,7 @@ export class Project implements IProject{
 
 
 
- constructor(data: IProject, ) {
+ constructor(data: IProject) {
         //M2-Assigment-#6
         this.todos = [] = [];
 
@@ -94,13 +94,14 @@ export class Project implements IProject{
         //UNIK ID per Projekt
         this.id = uuidv4();
        
-
+        //Set UI for Project-card
         this.setUI();
         
         //this.setUITodo(todos);
     
-        
     }
+
+
      //M2-Assigment Q#7
     addTodo(todo: Todo) {
         this.todos.push(todo)
@@ -146,3 +147,4 @@ export class Project implements IProject{
 
     }
 
+   

@@ -2,7 +2,7 @@ import { Input } from 'postcss';
 import { Project, IProject } from './Project';
 import { showModal, toggleModal,  } from './Modal';
 import { ToonShaderDotted } from 'three/examples/jsm/shaders/ToonShader.js';
-import { Todo } from './Todo';
+import { Todo, ITodo } from './TodoClass';
 
 //import * as showModal from "./"
 
@@ -11,6 +11,7 @@ export class ProjectManager {
     list: Project[] = [] // skapar en ny array med typen Project
     ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
     id: string
+   
 
 // constructor for ProjectManager class
     constructor(container: HTMLDivElement ) {
@@ -39,24 +40,13 @@ export class ProjectManager {
         project.ui.addEventListener("click", () => {
             const projectPage = document.getElementById("project-page") as HTMLDivElement   
             const detailsPage = document.getElementById("project-details") as HTMLDivElement
-            
             if (!detailsPage) {return}
+            
             projectPage.style.display = "none"
             detailsPage.style.display = "flex"
             this.setDetailsPage(project, this.id)
-
-            
-            
-            
     })  
-    const projectPage = document.getElementById("project-page") as HTMLDivElement;
-    const homePageButton = document.getElementById("homebtn") as HTMLButtonElement;
-    if (homePageButton) {
-        homePageButton.addEventListener("click", ()=>
-        projectPage.style.display = "flex"
-        
-        )   
-    }
+
         
     this.ui.append(project.ui);
     this.list.push(project);
@@ -64,18 +54,34 @@ export class ProjectManager {
     }
 
     
+/*     newTodoProject(data: ITodo) { // skapar en ny metod som tar in data av typen ITodo
+        this.ui = document.createElement('div') // skapar en ny div
+        this.ui.className = "Todolist" // ger ui div:en klassen "Todolist"
+
+        this.ui.innerHTML = `
+        <div class="Todolist" id="todo-list" style="display: flex";>
+            <h4 name="name-todo" class="T-doHeader">${data.name}</h4>
+            <p1 id="description-todo" name="description-todo">${data.description}</p1>
+            <div id="date-todo">${data.date}</div>
+            <p id="editTod" name="editTodo">${data.status}</p>
+        </div>
+        `;
+
+        } */
     
     
 
     setDetailsPage(project: Project, id: string) {
         const detailsPage = document.getElementById("project-details") as HTMLDivElement
+        const todoDiv = document.getElementById("Todolist") as HTMLDivElement
         this.id = project.id
-        if (!detailsPage) {return}
+        if (!detailsPage && !todoDiv) {return}
             const name = document.querySelector("[data-project-info='name']")
             const description = document.querySelector("[data-project-description='description']")
             const role = document.querySelector("[card-project-role='role']")
             const status = document.querySelector("[card-project-status='card-status']")
             const date = document.querySelector("[card-data-date='date']") 
+
             //M2-Assignment Q#1
             const nameIcon= document.querySelector("[class-header-class='dashboard-card-header']")
 
@@ -85,6 +91,7 @@ export class ProjectManager {
                 role.textContent = project.role
                 status.textContent = project.status 
                 date.textContent = project.date.toDateString()
+
                 //M2-Assignment Q#1
                 nameIcon.textContent = project.name.substring(0,2)
             }
@@ -98,12 +105,21 @@ export class ProjectManager {
         })
         if (project) {
             console.log(`Found project with id: ${project.id}`);
-        } else {
-            console.log(`No project found with id: ${id}`);
+            console.log(project);   
         }
         return project;
     }
     
+    //M2-Assignment Q#9
+    getToTodo(id:string) {
+        const todo = this.list.find((todoID) => {
+            return todoID.id === id;
+        })
+        if (todo) {
+            console.warn(`Found project with id: ${todo.id}`)
+        }
+    }
+
 
     deleteProject(id: string) {
         const project = this.getProject(id)

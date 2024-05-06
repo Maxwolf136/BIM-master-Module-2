@@ -274,18 +274,20 @@ button {
   flex-direction: column-reverse;
 }
 
-.To-dolist {
+.Todolist {
   display: flex; /* Use flexbox to align items */
   align-items: center; /* Align items vertically in the center */
   justify-content: space-between; /* Distribute space between items */
   padding-left: 10px; /* Add some padding inside the div */
   padding-right: 10px;
-  background-color: rgb(62, 63, 63);
   flex-direction: row;
-  border-top-right-radius: 40px;
+  border-top-right-radius: 90px;
   max-width: 435px;
   content: wrap;
+  border-radius: 20px;
 }
+
+
 
 .T-doHeader {
   margin-right: 50px; /* Add space to the right of each element */
@@ -300,7 +302,7 @@ button {
   content: wrap;
 }
 
-#status-todo {
+#statustodo {
   display: flex;
 
  }
@@ -320,6 +322,7 @@ button {
   justify-content: center;
  }
 
+ 
 
  #T-Symbol {
   background-color: #8e8b8b;
@@ -373,18 +376,30 @@ button {
   cursor: pointer;
 }
 
-.T-do :hover {
+.T-do:hover {
   background-color: var(--primary);
 }
 
+#todostatus {
+  width: 60px;
+  height: 30px;
+  text-align: center;
+  border-radius: 10px;
+  align-items: center;
+  padding: 11px;
+}
+
 #addTodo {
-  padding: 30px;
+  padding: 20px;
   background-color: green;
   border-radius: 20px;
   width: 100px;
   height: 20px;
   outline-color: red;
   display: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 #pop-up-modal {

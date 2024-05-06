@@ -2,10 +2,14 @@ import { IProject, role, status } from "./classes/Project"
 import { ProjectManager } from "./classes/ProjectManager"
 import { closeModal, showModal, toggleModal, } from "./classes/Modal"
 import { color, element } from "three/examples/jsm/nodes/Nodes.js"
-import { Todo, ITodo } from "./classes/Todo"
+import { Todo, ITodo } from "./classes/TodoClass"
+import { v4 as uuidv4 } from 'uuid';
+import { WebGLLights } from "three"
 
 const projectlistUI = document.getElementById("project-list") as HTMLDivElement
 const projectManager = new ProjectManager(projectlistUI)
+
+
 
 // KLickar på knappen "New Project" och skapar en ny div med klassen "project" 
 const newProjectBtn= document.getElementById("new-project-btn")
@@ -36,6 +40,18 @@ function nameLength(){
     }
 }
 */
+const projectPage = document.getElementById("project-page") as HTMLDivElement;
+const homePageButton = document.getElementById("homebtn") as HTMLButtonElement;
+const todoDiv = document.getElementById("To-dolist") as HTMLDivElement;
+
+if (homePageButton) {
+    homePageButton.addEventListener("click", () => {
+        projectPage.style.display = "flex";
+        todoDiv.style.display = "none";
+    });
+}
+
+
 
 const projectForm = document.getElementById("new-project-form")
 
@@ -54,7 +70,7 @@ if(projectForm && projectForm instanceof HTMLFormElement) {
  
 try {
 
-    const project = projectManager.newProject(projectProperty,  ) // skapar en ny variabel som är av typen projectManager och kallar på metoden newProject
+    const project = projectManager.newProject(projectProperty) // skapar en ny variabel som är av typen projectManager och kallar på metoden newProject
    // nameLength()
     projectForm.reset() // rensar inputfälten
     toggleModal ("new-project-modal")
@@ -119,8 +135,8 @@ if (editForm instanceof HTMLFormElement) {
     editForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = new FormData(editForm);
-        const projectID =  projectManager.id
-        const projectToUpdate = projectManager.getProject(projectID)
+        /* const projectID =  projectManager.id */
+        const projectToUpdate = projectManager.getProject(projectManager.id)
 
         if(projectToUpdate) {
             projectToUpdate.description = formData.get("description") as string,
@@ -133,11 +149,11 @@ if (editForm instanceof HTMLFormElement) {
         
         try {
             if (projectToUpdate) {
-                projectManager.setDetailsPage(projectToUpdate, projectID); // Call the setDetailsPage method with the project and project.id
+                projectManager.setDetailsPage(projectToUpdate, projectManager.id); // Call the setDetailsPage method with the project and project.id
                 projectToUpdate.setUI()
                 editForm.reset(); // Reset the input fields
                 toggleModal("edit-project-modal");
-                console.warn(projectToUpdate);
+                console.log(projectToUpdate);
                 
             }
         } catch (error) {
@@ -163,27 +179,47 @@ closeBtn.addEventListener("click", (event) => {closeModal("edit-project-modal")}
 closeModal("edit-project-modal")
 console.log(closeBtn)
 
+const toDoListDivElement = document.getElementById("Todolist") as HTMLDivElement;
+function colorChangeStatus (status:status, div:HTMLDivElement) {
+    const statusColorMap = {
+        pending: "red",
+        closed: "green",
+        archived: "red",
+    };
+    
+    const color = statusColorMap[status] || "white";
+    div.style.backgroundColor = color
+}
 
 
-//M2-Assigment-Q#6
-const edotTodo= document.getElementById("addTodo") as HTMLButtonElement
-if (edotTodo) {
-    edotTodo.addEventListener("click", () => {showModal("T-Do-project-modal")})
+
+
+//M2-Assigment-Q#6 ADD TODO
+const addTodo= document.getElementById("addTodo") as HTMLButtonElement
+if (addTodo) {
+    addTodo.addEventListener("click", () => {showModal("T-Do-project-modal")})
 } else {
     console.warn("No new project button found")
 }
 //M2-Assigment-Q#6
-
-
 const todDoForm = document.getElementById("T-Do-project-form") as HTMLFormElement
-
     
     if(todDoForm instanceof HTMLFormElement ) {
 
         todDoForm.addEventListener("submit", (e) => {
         e.preventDefault();
+
         const formData = new FormData(todDoForm);
+        
+   /*      if (getTodo) {
+            getTodo.description = formData.get("description-todo") as string;
+            getTodo.name = formData.get("name-todo") as string;
+            getTodo.status = formData.get("status") as status;
+            getTodo.date = new Date(formData.get("date") as string);
+            getTodo.id = uuidv4();
+        }  */
         const todoData: ITodo = {
+            id: uuidv4(),
             name: formData.get("name-todo") as string,
             description: formData.get("description-todo") as string,
             status: formData.get("status") as status,
@@ -191,53 +227,52 @@ const todDoForm = document.getElementById("T-Do-project-form") as HTMLFormElemen
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-            
-        })}
-        console.log(todoData)
+                
+                
+            })
+        } 
+   
         
-
-        // Select the div with class "To-dolist" 
-        const toDoListDiv = document.querySelector(".To-dolist");
-
+        // querySelect the div with class "To-dolist" 
+        const toDoListDiv = document.querySelector(".Todolist");
         //Create new aa div Element
         if (toDoListDiv) {
-            
             const newDiv = document.createElement('div');
             newDiv.innerHTML = `
-            <div class="To-dolist" id="todo-list" style="display: flex";>
-            <h4 name="name-todo" class="T-doHeader">${todoData.name}</h4>
-            <p1 id="description-todo" name="description-todo">${todoData.description}</p1>d
+            <div class="Todolist" id="todo-list" style="display: flex";>
+                <h4 name="name-todo" class="T-doHeader">${todoData.name}</h4>
+                <p1 id="description-todo" name="description-todo">${todoData.description}</p1>
             <div id="date-todo">${todoData.date}</div>
-            <div id="status-todo" name="status-todo">${todoData.status}<div>
-            <button class="editTodoitem" id="editTodoitem" style="display:flex">
-                <i id="editTodoitem" class="material-icons">edit</i>
-            </button>
-            
-        </div>
-        `;
-
-            newDiv.style.display = "flex";
-            
-             
-
-            // Select the container within the .dashboard-card div to which you want to append the new div
-            const container = document.querySelector(".dashboard-card-todo");
-            
-            
+                <div id="todostatus" name="todostatus">${todoData.status}</div>
+            </div>
+        ` ;
+           newDiv.style.display = "flex"; 
+           // colorChangeStatus(todoData.status as status, toDoListDivElement )
+            // qeuerySelect the container within the .dashboard-card div to which you want to append the new div
+           const container = document.querySelector(".dashboard-card-todo");
             // Append the new div to the container
             if (container) {
                 container.appendChild(newDiv);
-            }
+            } 
             
+           //M2-Assigment-Q#9
+            if (todoData.status === "Pending") {
+                newDiv.style.backgroundColor = "yellow";
+                newDiv.style.color = "black";
+            } else if (todoData.status === "Closed") { 
+                newDiv.style.backgroundColor = "red";
+            } else {
+                newDiv.style.color = "white";
+            }
         }
         
-    
         // Toggle the modal
         toggleModal("T-Do-project-modal");
         todDoForm.reset();
 
         //Using the addtodoproject to push it to an array property in Project Class
         const todo = todoData;
+        const todoID = todoData.id ;
         const project = projectManager.id;
         const projectToUpdate = projectManager.getProject(project);
         if (projectToUpdate) {
@@ -245,20 +280,14 @@ const todDoForm = document.getElementById("T-Do-project-form") as HTMLFormElemen
             
         }
         
-    })   
+    }
+    );
 
-    
-    
-    
-}    
-
-const todocloseBtn = document.getElementById("todoclosebtn") as HTMLButtonElement
+//Close todoform btn
+const todocloseBtn = document.getElementById("todoclosebtn") as HTMLButtonElement;
 todocloseBtn.addEventListener("click", () => {
     closeModal("T-Do-project-modal")
-}) 
-
-
-const editbtnToDo =  document.getElementById("editTodoitem") as HTMLButtonElement
-editbtnToDo.addEventListener("click", () => {
-    console.warn("whatahell")
 })
+
+
+}
