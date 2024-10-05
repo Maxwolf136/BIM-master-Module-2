@@ -1,9 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ProjectManager } from './ProjectManager';
+
+ //M2-Assignment Q#2
+const colorArray = ['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink', 'brown', 'black', 'grey'];
+
+function changeColorIcon() {
+    const color = colorArray[Math.floor(Math.random() * colorArray.length)];
+    return color;   
+}
+
 
 
 // För att det är valbara alternativ
 export type role = "Admin" | "Manager" | "Developer" | "Designer"
-export type status = "pending" | "closed" | "archived"
+export type status = "pending" | "closed " | "archived"
 
 
 export interface IProject {
@@ -24,39 +34,51 @@ export class Project implements IProject{
     date: Date
 
 // Variabler Property
-ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
-cost: number = 2
-progess: number = 0
-id: string
+    ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
+    cost: number = 2
+    progess: number = 0
+    id: string
 
+ 
 
-    constructor(data: IProject) {
-        //project card Property defintion 
+ constructor(data: IProject) {
+        //project card Property defintion
+      
         for (const key in data) {
             this[key] = data[key]
             console.log(key, data[key])
         }
-        const key =  this.id
+        const key = this.id;
         if (this[key] === data[key]) {
-            console.log("not successful")
+            console.log("successful");
         }
         if (this[key] !== data[key]) {
-            console.log("successful")
+            console.log("not successful");
         }
-
-
-        this.id = uuidv4()
-        this.setUI()
+        //M2-Assigment Q#4
+        if (this.date !== undefined) {
+            console.warn("ingen dataum satt")
+            this.date = new Date('1994-03-14')    
+        }
+       
+        //UNIK ID per Projekt
+        this.id = uuidv4();
+        this.setUI();
+    
+   
     }
-
+    
     setUI() { 
         if (this.ui){return}
         this.ui = document.createElement("div") // skapar en ny div
         this.ui.className = "project-card" // ger ui div:en klassen "project-card" och ger CSS-style enligt classen
-       // skapar en ny div med innehåll enligt nedan.
+        //M2-Assignment Q#2
+        const randomColor = changeColorIcon()
+        
+        //M2-Assignment Q#1
         this.ui.innerHTML = ` 
-    <div class="card-header">
-                <p style="background-color: #57ca34; padding: 10px; border-radius: 8px; aspect-ratio: 1;">HC</p>
+    <div class="card-header">            
+    <p style="background-color: ${randomColor}; padding: 10px; border-radius: 8px; aspect-ratio: 1;">${this.name.slice(0,2)}</p>
                 <div>
                 <h5>${this.name}</h5>
                 <p>${this.description}</p>
@@ -82,6 +104,15 @@ id: string
             </div>
     `}
 
-    
+    updateProperties(properties: IProject) {
+        this.name = properties.name
+        this.role = properties.role;
+        this.status = properties.status;
+        this.date = properties.date;
+
+        // Update the UI to reflect the new properties
+        this.setUI()
+    }
+
 }
- 
+
