@@ -28,7 +28,7 @@ export function ProjectCard (props: Props) {
                     <bim-label>{props.project.progess *100}*%</bim-label>
                 </div>
             </div>
-            
+            s 
             </div>
         </div>
 
