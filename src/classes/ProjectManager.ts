@@ -2,99 +2,52 @@ import { Input } from 'postcss';
 import { Project, IProject } from './Project';
 import { showModal, toggleModal,  } from './Modal';
 
-//import * as showModal from "./"
-
 export class ProjectManager {
-   // interna clsser/property
     list: Project[] = [] // skapar en ny array med typen Project
-    ui: HTMLDivElement // skapar en ny variabel som är av typen HTMLDivElement
-    id: string
+    onProjectCreated = (project: Project) =>  {}
+    onProjectDeleted = (project: Project) =>  {}
+    onProjectUpdated = (project: Project) =>  {}
 
-// constructor
-    constructor(container: HTMLDivElement) {
-        this.ui = container
-        const project = this.newProject({
-            name: "defaul Project",
-            description: "this is just a default PRoject",
-            status: "pending",
-            role: "Admin", 
-            date: new Date()
-        })
-        if (project) {
-            project.ui.click();
-        }
 
+
+    
+    filterProjects (value:string) {
+        const filterProjects = this.list.filter((project) => {
+            return project.name.includes(value)
+          })
+          return filterProjects
     }
-    newProject(data: IProject) { // skapar en ny metod som tar in data av typen IProject
+
+    newProject(data: IProject, id?: string) { // skapar en ny metod som tar in data av typen IProject
         const projectNames = this.list.map((project) =>  {
             return project.name
         })
 
-        //M2-Assigment Q#3
+        
         const nameToLong = data.name.length > 5
         if (nameToLong){
             console.warn("för långt namn")
             return false 
         } 
-        const nameInUse = projectNames.includes(data.name)
+
+        const project = new Project(data, id); 
+        const projectExcist = this.doesProjectExcist(project)
+
+        if(projectExcist) {
+            this.updateProject(project)
+        }
+        else {
+            const nameInUse = projectNames.includes(data.name)
             if (nameInUse) {
                 throw new Error(data.name + "finns redan") // skapar en ny error som skickar ut ett meddelande om att namnet redan finns
                 
+            }
+            this.list.push(project);
+            this.onProjectCreated(project)
         }
-        
-        const project = new Project(data);
-        project.ui.addEventListener("click", () => {
-            const projectPage = document.getElementById("project-page") as HTMLDivElement   
-            const detailsPage = document.getElementById("project-details") as HTMLDivElement
-            if (!detailsPage) {return}
-            projectPage.style.display = "none"
-            detailsPage.style.display = "flex"
-            this.setDetailsPage(project, this.id)
-
-                
-                
-                
-        })  
-        const projectPage = document.getElementById("project-page") as HTMLDivElement;
-        const homePageButton = document.getElementById("homebtn") as HTMLButtonElement;
-        if (homePageButton) {
-            homePageButton.addEventListener("click", ()=>
-            projectPage.style.display = "flex"
-         
-            )   
-        }
-            
-        this.ui.append(project.ui);
-        this.list.push(project);
-            return project
-        }
-
-        
-        
- 
-        setDetailsPage(project: Project, id: string) {
-            const detailsPage = document.getElementById("project-details") as HTMLDivElement
-            this.id = project.id
-            if (!detailsPage) {return}
-                const name = document.querySelector("[data-project-info='name']")
-                const description = document.querySelector("[data-project-description='description']")
-                const role = document.querySelector("[card-project-role='role']")
-                const status = document.querySelector("[card-project-status='card-status']")
-                const date = document.querySelector("[card-data-date='date']") 
-                //M2-Assignment Q#1
-                const nameIcon= document.querySelector("[class-header-class='dashboard-card-header']")
-
-                if (name && description && role && status && date && nameIcon) {	
-                    name.textContent = project.name
-                    description.textContent = project.description
-                    role.textContent = project.role
-                    status.textContent = project.status 
-                    date.textContent = project.date.toDateString()
-                    //M2-Assignment Q#1
-                    nameIcon.textContent = project.name.substring(0,2)
-                }
-        }
-
+        return project
+    }
+    
 
 //M2-Assignment Q#5
         getProject(id:string) {
@@ -114,12 +67,13 @@ export class ProjectManager {
         deleteProject(id: string) {
             const project = this.getProject(id)
             if (!project) {return}
-            project.ui.remove()
+          
 
             const remaining = this.list.filter((project) => {
                 return project.id !== id
             })
             this.list = remaining
+            this.onProjectDeleted(project)
         }
 
         getTotalCost() {
@@ -135,12 +89,25 @@ export class ProjectManager {
             
             
         }
+        
+        doesProjectExcist(updatedProject: Project) {
+            const project = this.list.find(project => project.id === updatedProject.id);
+            if (!project) {
+               return false
+            }
+            else {
+                return true
+            }
+            
+        }
+
         updateProject(updatedProject: Project) {
             const project = this.list.find(project => project.id === updatedProject.id);
             if (!project) {
                 throw new Error('Project not found');
             }
             this.list = this.list.map(project => project.id === updatedProject.id ? updatedProject : project)
+            this.onProjectUpdated(updatedProject)
         }
 
         addProject(project: Project) {

@@ -4,10 +4,12 @@ import { TodoCard } from "../src/TodoCard"
 import * as THREE from "three"
 import { v4 as uuidv4 } from 'uuid';
 
-type ToDoPriority = "Low" | "Medium" | "High"
+import { Todo } from "./TodoClass";
+
+ type ToDoPriority = "Low" | "Medium" | "High"
 
 interface ToDo {
-  id: string 
+  id: string
   description: string
   date: Date
   fragmentMap: OBC.FragmentIdMap
@@ -15,22 +17,23 @@ interface ToDo {
   priority: ToDoPriority
   
 }
+ 
 
 
 
-
-export class TodoCreator extends OBC.Component<ToDo[]> implements OBC.UI, OBC.Disposable {
+export class TodoCreator extends OBC.Component<Todo> implements OBC.UI, OBC.Disposable {  
+  onProjectCreated = new OBC.Event<Todo> ()
   uuid = uuidv4()
-  
-  onProjectCreated = new OBC.Event<ToDo> ()
   enabled = true
   uiElement = new OBC.UIElement<{
     activationButton: OBC.Button
     todoList: OBC.FloatingWindow
-  
+
   }>()
+
+
   private _components: OBC.Components
-  private _list: ToDo[] = []
+  private _list: Todo[] = []
   
   constructor(components: OBC.Components) {
     super(components)
@@ -53,6 +56,7 @@ async setup() {
   highlighter.add(`${this.uuid}-priority-High`, [new THREE.MeshStandardMaterial ({color:0xFF0000})])
 }
 
+
 //Assigment M3-C4-L8
 deleteToDo(todo: ToDo, todoCard: TodoCard) {
   const todoListUpdate = this._list.filter((todo) => {
@@ -65,7 +69,6 @@ deleteToDo(todo: ToDo, todoCard: TodoCard) {
 
 getTodoID(id:string) {
   this.uuid = id
-  console.log (`searching for project with id: ${this.uuid}`);
   const todoID = this._list.find((todo) =>{
     console.log(`checking project with id: ${id}`);
     return todo.id === id; 
@@ -78,13 +81,13 @@ getTodoID(id:string) {
   return todoID;
 } 
 
-  async addTodo(description: string, priority: ToDoPriority) {
+//ADDERA TODO
+async addTodo(description: string, priority: ToDoPriority) {
     if(!this.enabled) {return}
     const camera = this._components.camera
     if(!(camera instanceof OBC.OrthoPerspectiveCamera)) {
       throw new Error ("todoCreator need to the orotoprospective camerea in order to work")
     }
-    
     const position = new THREE.Vector3()
     camera.controls.getPosition(position)
     const target = new THREE.Vector3()
@@ -94,10 +97,9 @@ getTodoID(id:string) {
 
     const highlighter = await this._components.tools.get(OBC.FragmentHighlighter)
 
-    // Todo Objekt
-    const id = uuidv4()
+// Todo Objekt
     const todo: ToDo = {
-      id,
+      id: uuidv4(),
       description,
       camera: todoCamera,
       date: new Date(),
@@ -127,7 +129,7 @@ getTodoID(id:string) {
     })
     const todoList = this.uiElement.get("todoList")
     todoList.addChild(todoCard)
-    this.onProjectCreated.trigger(todo)
+    this.onProjectCreated.trigger()
 
     //skapar ett event för när knappen triggar metoden "Deletetodo". Eventetet styrs av klassen TODOCARD
     todoCard.onCardDeleteClick.add(()=>{
@@ -135,6 +137,7 @@ getTodoID(id:string) {
           console.warn("Todo Deleted")
     })
   }
+
 
   private async setUI() {
     const activationButton = new OBC.Button(this._components)
@@ -170,7 +173,7 @@ getTodoID(id:string) {
       this.addTodo(descriptionInput.value, priorityDopDown.value as ToDoPriority)
       descriptionInput.value = ""
       form.visible = false
-      this.uuid
+      //this.uuid
     })
     
     form.onCancel.add(() => form.visible = false)

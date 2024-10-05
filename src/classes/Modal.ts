@@ -22,6 +22,14 @@ export function showModal(id:string ) {
     }
 }
 
+export function closeModal(id: string) {
+    const modal = document.getElementById(id)
+    if (modal && modal instanceof HTMLDialogElement) {
+      modal.close()
+    } else {
+      console.warn("The provided modal wasn't found. ID: ", id)
+    }
+  }
 
 /*
 
@@ -36,12 +44,3 @@ export function showModal(id: string, projectId: string) {
   }
 }
 */
-
-export function closeModal(id: string) {
-    const modal = document.getElementById(id)
-    if (modal && modal instanceof HTMLDialogElement) {
-      modal.close()
-    } else {
-      console.warn("The provided modal wasn't found. ID: ", id)
-    }
-  }

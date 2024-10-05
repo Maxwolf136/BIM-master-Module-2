@@ -3,8 +3,11 @@ import * as OBC from "openbim-components"
 // sätta up ett objekt för TODOCARD med alla properties
 export class TodoCard extends OBC.SimpleUIComponent {
     onCardclick = new OBC.Event()
+
+    
     //när property variabeln görs ett nytt OBC class med eventmetod
     onCardDeleteClick = new OBC.Event()
+    
     slots: { 
         actionButtons: OBC.SimpleUIComponent
     }
