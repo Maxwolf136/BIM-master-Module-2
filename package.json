@@ -19,7 +19,7 @@
     "@vitejs/plugin-react": "^4.0.3",
     "bim-fragment": "1.0.22",
     "esbuild": "^0.19.12",
-    "firebase": "^10.12.2",
+    "firebase": "^10.14.0",
     "nanoid": "^3.3.7",
     "openbim-components": "1.1.5",
     "picocolors": "^1.0.0",

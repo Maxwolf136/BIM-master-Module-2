@@ -46,7 +46,6 @@ export function UserPage() {
                 ${userTable}
             <bim-panel-section>
        </bim-panel>
-
        `
     })
 

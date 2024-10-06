@@ -2,7 +2,7 @@ import * as React from "react"
 import { ProjectManager } from "../classes/ProjectManager"
 import * as Router from "react-router-dom"
 import { role, status } from "../classes/Project";
-
+import { deleteDBdocument, updatedProject } from "../firebase";
 import { TodoCard } from "./ToDoCard"
 import { IFCViewer } from "./IFCViewer";
 
@@ -47,7 +47,11 @@ export function ProjectDetailsPage(props: Props) {
   if(!project) {return(<p> The Project with ID {routeParams.id} wasn't found.</p>)}
     
 
-
+  const navigateTO = Router.useNavigate()
+  props.projectsManager.onProjectDeleted = async() => {
+    deleteDBdocument("/projects", project.id)
+    navigateTO("/")
+  }
     
 // onFormSubmit
 
@@ -99,6 +103,14 @@ const onFormSubit = (e: React.FormEvent) => {
     
     return(
 <div className="page" id="project-details" >
+<header>
+    <div>
+      <h2 data-project-info="name">{project.name}</h2>
+      <p style={{ color: "#969696" }}>{project.description}</p>
+    </div>
+    <button onClick={()=> {props.projectsManager.deleteProject(project.id)}} style={{ backgroundColor:"red"}}> Delete Project</button>
+    <button onClick={()=> {props.projectsManager.updateProject(project)}}>Update Updateproject</button>
+  </header>
 <dialog id="edit-project-modal">
     <form onSubmit={(e) => onFormSubit(e)}  id="edit-project-form">
       <h2>Edit Poject</h2>
@@ -161,12 +173,7 @@ const onFormSubit = (e: React.FormEvent) => {
       </div>
     </form>
   </dialog>
-  <header>
-    <div>
-      <h2 data-project-info="name">{project.name}</h2>
-      <p style={{ color: "#969696" }}>{project.description}</p>
-    </div>
-  </header>
+
   <div className="main-page-content">
     <div style={{ display: "flex", flexDirection: "column", rowGap: 30 }}>
       <div className="dashboard-card" style={{ padding: "30px 0" }}>

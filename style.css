@@ -18,16 +18,31 @@
   --font-3xl: 22px;
 }
 
+#new-project-btn {
+  padding: 5px;
+  color: red;
+  background-color: #212321;
+}
+
+#new-project-btn:hover {
+  background-color: #02c802;
+}
+
+
 
 bim-button {
   color: #8b8a8a;
   background-color: #514e4e;
   cursor: pointer;
+  padding: 1px;
+  margin-top: 2px;
   
 }
 bim-button:hover {
   background-color: rgb(37, 36, 36);
 }
+
+
 
 * {
   font-family: 'Inter', sans-serif;

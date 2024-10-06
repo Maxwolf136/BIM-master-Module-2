@@ -1,10 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-
-import { getFirestore} from "firebase/firestore";
-
 import * as Firestore from "firebase/firestore";
-import { IProject } from "../classes/Project";
+import { IProject, Project } from "../classes/Project";
 
 
 
@@ -23,9 +20,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const firebaseDB = getFirestore()
+export const firestoreDB = Firestore.getFirestore()
 
 
 export function getCollection<T>(path:string) {
-  return Firestore.collection(firebaseDB, path) as Firestore.CollectionReference<T>
+  return Firestore.collection(firestoreDB, path) as Firestore.CollectionReference<T>
+}
+
+ export async function deleteDBdocument(path: string, id: string) {
+  const doc = Firestore.doc(firestoreDB, `${path}/${id}`)
+  await Firestore.deleteDoc(doc)
+}
+
+export async function updatedProject<T extends Record<string, any>>(path: string, id: string, data: T) {
+  const doc = Firestore.doc(firestoreDB, `${path}/${id}`)
+  await Firestore.updateDoc(doc, data)
 }
