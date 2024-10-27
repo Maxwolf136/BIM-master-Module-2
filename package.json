@@ -14,14 +14,16 @@
     "vite": "^4.5.5"
   },
   "dependencies": {
+    "@thatopen/components": "^2.3.13",
+    "@thatopen/components-front": "^2.3.8",
     "@thatopen/ui": "~2.2.0",
+    "@thatopen/ui-obc": "~2.2.0",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.0.3",
     "bim-fragment": "1.0.22",
     "esbuild": "^0.19.12",
     "firebase": "^10.14.0",
     "nanoid": "^3.3.7",
-    "openbim-components": "1.1.5",
     "picocolors": "^1.0.0",
     "postcss": "^8.4.35",
     "react": "^18.2.0",

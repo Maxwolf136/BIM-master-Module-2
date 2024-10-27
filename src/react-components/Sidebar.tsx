@@ -21,7 +21,7 @@ const createTodo = async () => {
         }
         todoCreator.addTodo("hej", "Low");
     } catch (error) {
-        console.error("Error fetching TodoCreator tool: ", error);
+        console.error("Error fetching TodoCreator tool: ", error)
     }
 }
 

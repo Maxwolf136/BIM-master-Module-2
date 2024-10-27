@@ -1,7 +1,7 @@
 import * as React from "react"
 import { ProjectManager } from "../classes/ProjectManager"
 import * as Router from "react-router-dom"
-import { role, status } from "../classes/Project";
+import { IProject, Project, role, status } from "../classes/Project";
 import { deleteDBdocument, updatedProject } from "../firebase";
 import { TodoCard } from "./ToDoCard"
 import { IFCViewer } from "./IFCViewer";
@@ -19,10 +19,12 @@ export function ProjectDetailsPage(props: Props) {
   //Assigment M4-C2-L11
   
 
-  props.projectsManager.onProjectUpdated = () => {
-    const project = props.projectsManager.getProject(routeParams.id)
-    setProject(project)
-  
+  props.projectsManager.onProjectUpdated = async (project: Project) => {
+    const updatedProjectData = props.projectsManager.getProject(routeParams.id);
+    if (updatedProjectData) {
+      await updatedProject<Partial<IProject>>("/projects", project.id, project);
+      setProject(updatedProjectData);
+    }
   }
 
   const onEditprojectBtn = () => {
@@ -48,6 +50,7 @@ export function ProjectDetailsPage(props: Props) {
     
 
   const navigateTO = Router.useNavigate()
+  
   props.projectsManager.onProjectDeleted = async() => {
     deleteDBdocument("/projects", project.id)
     navigateTO("/")

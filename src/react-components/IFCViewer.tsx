@@ -1,17 +1,14 @@
 import * as React from "react";
-import * as OBC from "openbim-components"
-import { FragmentsGroup } from "bim-fragment";
-import { TodoCreator } from "../bim-components/ToDoCreator";
-import { SimpleQTO } from "../bim-components/SimpleQTO";
+import * as OBC from "@thatopen/components"
 
 
-interface IViewerContext {
+/* interface IViewerContext {
     viewer: OBC.Components | null
     setViewer: (viewer: OBC.Components | null) => void
     
-  }
+  } */
   
-  export const ViewerContext = React.createContext<IViewerContext>({
+/*   export const ViewerContext = React.createContext<>({
     viewer: null,
     setViewer: () => {}
     
@@ -25,14 +22,51 @@ interface IViewerContext {
       </ViewerContext.Provider>
     )
   }
-
+ */
  
 
 
 export function IFCViewer() {
+    const components  =  new OBC.Components()
+
+
+
+    const setViewer = () => {
+        const worlds = components.get(OBC.Worlds)
+        const world = worlds.create<
+            OBC.SimpleScene,
+            OBC.OrthoPerspectiveCamera,
+            OBC.SimpleRenderer
+        >()
+
+        const sceneComponent = new OBC.SimpleScene(viewer)
+        world.scene = sceneComponent
+        world.scene.setup()
+        world.scene.three.background = null
+
+        const viewerContainer = document.getElementById("viewer-container")  as HTMLElement
+        const rendererComponent = new OBC.SimpleRenderer(viewer, viewerContainer);
+        world.renderer = rendererComponent
+
+        const cameraComponent = new OBC.OrthoPerspectiveCamera(viewer)
+        world.camera = cameraComponent
+
+        viewer.init()
+        cameraComponent.updateAspect()
+        
+        const ifcLoader = components.get(OBC.IfcLoader)
+        ifcLoader.load()
+
+    }
+
+    const setupUI = () => {
+        const viewerContainer = document.getElementById("viewer-container")  as HTMLElement
+        if(!viewerContainer) return
+    }
+
    const {setViewer} = React.useContext(ViewerContext)
    let viewer: OBC.Components
-    const createViewer = async () => {
+ /*    const createViewer = async () => {
         viewer = new OBC.Components()
         setViewer(viewer)
 
@@ -109,7 +143,6 @@ export function IFCViewer() {
         }
         
         const highlighter = new OBC.FragmentHighlighter(viewer)
-        
         highlighter.setup()
         
         const propertiesProcessor = new OBC.IfcPropertiesProcessor(viewer)
@@ -252,24 +285,22 @@ export function IFCViewer() {
         )
         viewer.ui.addToolbar(toolbar)
         
-    }
+    } */
 
 
     React.useEffect(() => {
         createViewer()
         return () => {
-            viewer.dispose()
-            setViewer(null)
+            components.dispose()
+            setViewer()
         }
     }, [])
 
 
 
     return (
-    <div
-        id="viewer-container"
-        className="dashboard-card"
-        style={{ minWidth: 0, position: "relative" }}
-    />
-    )
+        <bim-viewport
+            id="viewer-container"
+         />
+    );
 }

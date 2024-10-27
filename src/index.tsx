@@ -18,6 +18,7 @@ declare global {
             "bim-grid": any;
             "bim-label": any;
             "bim-button": any
+            "bim-viewport": any
         }
      }
     }
