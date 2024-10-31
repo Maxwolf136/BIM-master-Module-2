@@ -3,12 +3,12 @@ import * as OBC from "@thatopen/components"
 import * as BUI from "@thatopen/ui";
 import * as CUI from "@thatopen/ui-obc"
 import * as OBCF from "@thatopen/components-front"
-import { triplanarTexture } from "three/examples/jsm/nodes/Nodes.js";
-
+import { FragmentsGroup } from "@thatopen/fragments";
 
 
 export function IFCViewer() {
     const components  =  new OBC.Components()
+    let fragmentModel: FragmentsGroup | undefined
 
     const setViewer = () => {
         const worlds = components.get(OBC.Worlds)
@@ -35,9 +35,14 @@ export function IFCViewer() {
         ifcLoader.setup()
         
         const fragmentsManager = components.get(OBC.FragmentsManager)
-        fragmentsManager.onFragmentsLoaded.add((model) => {
+        fragmentsManager.onFragmentsLoaded.add(async (model) => {
             console.log(model)
             world.scene.three.add(model)
+
+            const indexer = components.get(OBC.IfcRelationsIndexer);
+            await indexer.process(model)
+
+            fragmentModel = model
             
         })
         
@@ -93,6 +98,23 @@ export function IFCViewer() {
 
     }
 
+    const onShowProperties = () =>  {
+        if(!fragmentModel) return
+        const highlighter = components.get(OBCF.Highlighter)
+        const fragments = components.get(OBC.FragmentsManager)
+        const selection = highlighter.selection.select 
+        const indexer = components.get(OBC.IfcRelationsIndexer)
+        if(Object.keys(selection).length === 0 ) return
+        for(const fragmentID in selection) {
+            const fragment  = fragments.list.get(fragmentID)
+            const expressID = selection[fragmentID]
+            for(const id of expressID) {
+                const psets = indexer.getEntityRelations(fragmentModel, id, "IsDefinedBy")
+                console.log(psets)
+            }
+         }
+    }
+
     const setupUI = () => {
         const viewerContainer = document.getElementById("viewer-container")  as HTMLElement
         if(!viewerContainer) return
@@ -136,6 +158,14 @@ export function IFCViewer() {
             >
             </bim-button>
             </bim-toolbar-section>
+            <bim-toolbar-section label="Properties">
+            <bim-button 
+                label="Show Properties" 
+                icon="mdi:users" 
+                @click = ${onShowProperties}
+            >
+            </bim-button>
+            </bim-toolbar-section>
         </bim-toolbar>
             `
         })
@@ -162,9 +192,15 @@ export function IFCViewer() {
     React.useEffect(() => {
         setViewer();
         setupUI()
+
         return () => {
-            components.dispose()
-            setViewer()
+            if(components) {
+                components.dispose()
+            }
+            if(fragmentModel) {
+                fragmentModel.dispose();
+                fragmentModel = undefined
+            }
         }
     }, [])
 
