@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary: #9b9690;
+  --primary: #ffffff;
   --primary-100: #23333b;
-  --primary-200: #979ea1;
+  --primary-200: #f0f4f5;
   --primary-300: #808385;
   --primary-400: #d6912a;
-  --background: #404142;
+  --background: #67696a;
   --background-100: #77797c;
   --background-200: #3b3c3f;
   --font-xs: 10px;
@@ -42,7 +42,10 @@ bim-button:hover {
   background-color: rgb(37, 36, 36);
 }
 
-
+bim-panel {
+  background-color: white;
+  color: black;
+}
 
 * {
   font-family: 'Inter', sans-serif;
